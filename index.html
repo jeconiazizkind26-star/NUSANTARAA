@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nusantara Explorer – Interactive & Quiz 38 Provinces</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Montserrat:wght@300;500;700&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <video autoplay muted loop id="bg-video">
+        <source src="vidio.mp4" type="video/mp4" />
+        Browser Anda tidak mendukung tag video.
+    </video>
+    <div class="batik-overlay"></div>
+
+    <nav class="navbar">
+        <div class="logo">NUSANTARA</div>
+        <ul class="menu">
+            <li data-scroll="hero" data-key="nav.home">Beranda</li>
+            <li data-scroll="carousel-wrapper" data-key="nav.provinces">Provinsi</li>
+            <li data-scroll="quiz-wrapper" data-key="nav.quiz">Quiz</li>
+            <li onclick="openLeaderboardModal()" data-key="nav.rankings">Peringkat</li>
+            <li data-scroll="map-section" data-key="nav.map">Peta</li>
+            <li data-scroll="info" data-key="nav.about">Tentang</li>
+            <li data-scroll="contact" data-key="nav.contact">Kontak</li>
+            <li onclick="toggleDarkMode()" id="dark-mode-toggle"><i class="fas fa-moon"></i></li>
+        </ul>
+        <div class="controls">
+            <select id="langSwitch">
+                <option value="id">INDONESIA</option>
+                <option value="en">ENGLISH</option>
+            </select>
+            <div class="account-menu">
+                <i class="fas fa-user-circle account-icon" id="account-icon"></i>
+                <div class="account-dropdown" id="account-dropdown">
+                    <div id="dropdown-content"></div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero" id="hero">
+        <h3 data-key="hero.subtitle">Menuju Visi Indonesia 2045</h3>
+        <h1 data-key="hero.title">JELAJAHI KEINDAHAN NUSANTARA</h1>
+        <p class="hero-subtext" data-key="hero.description">Temukan kekayaan budaya 38 provinsi Indonesia melalui peta interaktif, galeri, dan kuis edukatif</p>
+        <button class="hero-cta" onclick="document.getElementById('carousel-wrapper').scrollIntoView({ behavior: 'smooth' })" data-key="hero.explore">Mulai Eksplorasi</button>
+    </section>
+
+    <section class="carousel-wrapper" id="carousel-wrapper">
+        <h2 class="section-title" data-key="carousel.title">Galeri Provinsi Indonesia</h2>
+        <div class="carousel">
+            <div class="slides" id="slides-container"></div>
+            <button class="nav prev" aria-label="Previous Slide">⟨</button>
+            <button class="nav next" aria-label="Next Slide">⟩</button>
+            <div class="carousel-info">
+                <span id="current-slide">1</span> / <span id="total-slides">38</span>
+            </div>
+            <div class="dots" id="dots"></div>
+        </div>
+    </section>
+
+    <section class="quiz-section" id="quiz-wrapper">
+        <div class="quiz-container">
+            <h2 data-key="quiz.title">Quiz: Tebak Budaya & Provinsi</h2>
+            <div class="quiz-stats">
+                <span data-key="quiz.score">Skor: <span id="current-score">0</span></span>
+                <span data-key="quiz.progress">Pertanyaan: <span id="current-question">1</span>/<span id="total-questions">5</span></span>
+            </div>
+            <div id="quiz-question" class="quiz-question-text"></div>
+            <div id="quiz-options"></div>
+            <div id="quiz-feedback" class="quiz-feedback-text"></div>
+            <button id="next-question" class="quiz-btn" data-key="quiz.next">Soal Berikutnya</button>
+            <div class="quiz-timer">
+                <div class="timer-bar" id="timer-bar"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== MAP SECTION + SCRIPT (FULL) ========== -->
+
+<section class="map-section" id="map-section">
+    <div class="map-container">
+        <h2 data-key="map.title">Peta Interaktif Indonesia</h2>
+        <p data-key="map.description">
+            Pilih provinsi di bawah untuk melihat lokasinya langsung di Google Maps:
+        </p>
+
+        <div class="map-wrapper">
+            <iframe 
+                id="google-map-embed"
+                width="100%" 
+                height="450" 
+                loading="lazy" 
+                allowfullscreen 
+                referrerpolicy="no-referrer-when-downgrade"
+                src="https://www.google.com/maps?q=Indonesia&hl=id&z=5&output=embed">
+            </iframe>
+
+            <div class="map-controls">
+                <button class="map-btn" onclick="zoomIn()" title="Zoom In"><i class="fas fa-search-plus"></i></button>
+                <button class="map-btn" onclick="zoomOut()" title="Zoom Out"><i class="fas fa-search-minus"></i></button>
+                <button class="map-btn" onclick="resetMap()" title="Reset Peta"><i class="fas fa-home"></i></button>
+            </div>
+        </div>
+
+        <div id="map-info" class="map-info" data-key="map.select">
+            Pilih provinsi dari daftar di bawah:
+        </div>
+
+        <select id="province-map-selector" class="province-map-selector"></select>
+
+        <div class="province-quick-info" id="province-quick-info"></div>
+    </div>
+</section>
+
+    <section id="info" class="info-section">
+        <div class="content">
+            <h2 data-key="about.title">Tentang Nusantara Explorer</h2>
+            <p data-key="about.description">Website ini mengeksplorasi kekayaan budaya Nusantara dengan cara yang interaktif, edukatif, dan estetis. Temukan keunikan setiap provinsi melalui gambar, deskripsi mendalam, dan uji pengetahuan Anda dengan kuis menarik.</p>
+            <div class="features">
+                <div class="feature">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h3 data-key="about.feature1.title">Peta Interaktif</h3>
+                    <p data-key="about.feature1.desc">Jelajahi lokasi setiap provinsi dengan zoom dan navigasi mudah</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-images"></i>
+                    <h3 data-key="about.feature2.title">Galeri Lengkap</h3>
+                    <p data-key="about.feature2.desc">Lihat foto-foto budaya dan keindahan alam setiap provinsi</p>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-gamepad"></i>
+                    <h3 data-key="about.feature3.title">Kuis Edukatif</h3>
+                    <p data-key="about.feature3.desc">Uji pengetahuan Anda tentang budaya Nusantara</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact-section">
+        <div class="content">
+            <h2 data-key="contact.title">Kontak Kami</h2>
+            <div class="contact-info">
+                <p><i class="fas fa-envelope"></i> info@nusantara-explorer.id</p>
+                <p><i class="fab fa-instagram"></i> @nusantara_explorer</p>
+                <p><i class="fas fa-phone"></i> +62 812 3456 7890</p>
+            </div>
+            <div class="social-links">
+                <button class="social-btn"><i class="fab fa-facebook"></i></button>
+                <button class="social-btn"><i class="fab fa-twitter"></i></button>
+                <button class="social-btn"><i class="fab fa-youtube"></i></button>
+                <button class="social-btn"><i class="fab fa-tiktok"></i></button>
+            </div>
+        </div>
+    </section>
+
+    <button id="backToTop" class="back-to-top" aria-label="Back to Top"><i class="fas fa-chevron-up"></i></button>
+
+    <!-- Modals -->
+    <div id="gallery-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="close-modal">×</span>
+            <h2 id="modal-title" class="modal-title-center">Detail Budaya Provinsi</h2>
+            <div id="modal-detail" class="modal-detail">
+                <div id="detail-description" class="detail-description"></div>
+                <div class="modal-actions">
+                    <button id="continue-to-gallery" class="quiz-btn" data-key="modal.gallery">
+                        <i class="fas fa-images"></i> Lanjutkan ke Galeri
+                    </button>
+                    <button onclick="shareProvince()" class="share-btn">
+                        <i class="fas fa-share-alt"></i> Bagikan
+                    </button>
+                </div>
+            </div>
+            <div id="gallery-images" class="gallery-images" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div id="auth-modal" class="modal">
+        <div class="modal-content auth-content">
+            <span class="close" id="close-auth-modal">×</span>
+            <h2 id="auth-title"></h2>
+            <div id="auth-body"></div>
+        </div>
+    </div>
+
+    <div id="leaderboard-modal" class="modal">
+        <div class="modal-content auth-content">
+            <span class="close" id="close-leaderboard-modal">×</span>
+            <h2 id="leaderboard-title" data-key="leaderboard.title">🏆 Papan Peringkat Nusantara</h2>
+            <div id="leaderboard-body" class="profile-detail"></div>
+        </div>
+    </div>
+
+    <div id="share-modal" class="modal">
+        <div class="modal-content share-content">
+            <span class="close" onclick="closeShareModal()">×</span>
+            <h2 data-key="share.title">Bagikan Provinsi</h2>
+            <div class="share-options">
+                <button onclick="shareFacebook()" class="share-option facebook"><i class="fab fa-facebook"></i> Facebook</button>
+                <button onclick="shareTwitter()" class="share-option twitter"><i class="fab fa-twitter"></i> Twitter</button>
+                <button onclick="shareWhatsApp()" class="share-option whatsapp"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+                <button onclick="copyLink()" class="share-option copy"><i class="fas fa-copy"></i> Salin Link</button>
+            </div>
+            <input type="text" id="share-link" readonly>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
